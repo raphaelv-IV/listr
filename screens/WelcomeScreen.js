@@ -1,35 +1,31 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Image, ImageBackground, Text, TextInput} from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Image, ImageBackground, Text, TextInput, onPress} from 'react-native';
 import Button from '../components/Button';
 
 
 
-const WelcomeScreen = () => (
-  <View style={styles.container}>
-
-    <ImageBackground source={require('../assets/nyc700.jpg')} style={styles.image}>
-      <Image style={styles.logo} source={require('../assets/logo2.png')}/>
-      <Button text="Login"></Button>
-    </ImageBackground>
-    
-
-  </View>
+const WelcomeScreen = ({navigation}) => (
+  <ImageBackground source={require('../assets/nyc600.jpg')} style={styles.bckimage}>
+    <View style={styles.logo}>
+      <Image source={require('../assets/logoMAIN1.png')}/>
+    </View>
+    <Button onPress={() => navigation.navigate("Login")} title="Get Started"/>
+  </ImageBackground>
 );
 
+
+
 const styles = StyleSheet.create({
-  container: {
+  bckimage: {
     flex: 1,
-    flexDirection: "column",
-    alignItems: 'center'
-  },
-  image: {
-    flex: 1,
-    resizeMode: "cover",
-    justifyContent: "center"
+    alignItems: 'center',
+    width: '100%'
   },
   logo: {
-    bottom: 230
- 
+    flex: 1,
+    alignItems: 'center',
+    marginTop: '-20%',
+    left: '1.7%'
   }
 });
 
@@ -37,3 +33,4 @@ const styles = StyleSheet.create({
 
 
 export default WelcomeScreen;
+
