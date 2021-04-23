@@ -4,17 +4,18 @@ import TextBox2 from '../components/TextBox2';
 import TextBox3 from '../components/TextBox3';
 import Button from '../components/Button';
 
-
-const LoginScreen = ({navigation}) => {
+const ios = (Platform.OS == "ios" ? true : false);
+const LoginScreen = ({navigation}) => {    
     return (
     <KeyboardAvoidingView
-    behavior={Platform.OS == "ios" ? "padding" : "height"}
-    keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
-    enabled={Platform.OS === "ios" ? true : false}
+    behavior={ios ? "padding" : "height"}
+    keyboardVerticalOffset={ios ? 0 : 20}
+    enabled= {ios}
     style={styles.screen}>
-        <TextBox2 />
-        <TextBox3 />
-        <View style={styles.btn} >
+        <></>
+        <TextBox2 ios={ios}/>
+        <TextBox3 ios={ios}/>
+        <View style={styles.btn}>
         <Button title="Login" />
         <Button title="Sign Up" onPress={() => navigation.navigate("Sign Up")}/>
         </View>
