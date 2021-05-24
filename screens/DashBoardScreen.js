@@ -1,25 +1,51 @@
 import React from 'react';
-import { PanResponder, Image, Animated, View, Dimensions } from 'react-native';
+import { PanResponder, Image, Animated, View, Dimensions, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchUser, fetchUserPosts, fetchUsersData} from '../components/redux/actions/index';
+import firestore from '@react-native-firebase/firestore';
 import firebase from 'firebase';
-import { user } from '../components/redux/reducers/user';
-import { users } from '../components/redux/reducers/users';
+import { TouchableHighlightBase } from 'react-native';
 
 
 const ScreenWidth = Dimensions.get("window").width
 const ScreenHeight = Dimensions.get("window").height
 
+const mapStateToProps = (store) => ({
+    posts: store.userState.posts
+}) 
 
-export class DashBoardScreen extends React.Component {
+const mapDispatchToProps = dispatch => {
+    return {
+
+    }
+}
+
+
+class DashBoardScreen extends React.Component {
+    state = {
+        usersPosts: []
+    }
     constructor(props){
         super(props)
+        this.fetchUser
         this.position = new Animated.ValueXY()
-        this.state={
-            posts: []
+        this.subscriber =
+            firebase.firestore()
+                .collection("posts")
+                .doc()
+                .collection("usersPosts")
+                .doc()
+                .onSnapshot(doc => {
+                    this.setState({
+                        posts: {
+                            usersPosts: doc.data()
+                        }
+                    })
 
-        }
+                })
+    
+
         this.PanResponder = PanResponder.create({
             onStartShouldSetPanResponder: (event, gestureState) => true,
             onPanResponderMove: (event, gestureState) => {
@@ -31,7 +57,7 @@ export class DashBoardScreen extends React.Component {
                         toValue: {x: ScreenWidth + 100, y: gestureState.dy},
                         useNativeDriver: true
                     }) .start(() => {
-                        this.setState({currentIndex: uri}, () => {
+                        this.setState({posts}, () => {
                             this.position.setValue({x: 0, y: 0})
                         })
                     })
@@ -41,7 +67,7 @@ export class DashBoardScreen extends React.Component {
                         toValue: {x: -ScreenWidth - 150, y: gestureState.dy},
                         useNativeDriver: true
                     }) .start(() => {
-                        this.setState({currentIndex: uri}, () => {
+                        this.setState({posts}, () => {
                             this.position.setValue({x: 0, y: 0})
                         })
                     })
@@ -78,45 +104,47 @@ export class DashBoardScreen extends React.Component {
             extrapolate: 'clamp'
         })
     }
-    
-    componentDidMount() {
-        this.props.fetchUser()
-        this.props.fetchUserPosts()
-    
+
+
+    fetchUser = async () => {
+        const users = await firestore()
+        .collection("users")
+        .get()
     }
-    
+
+  
+
+
     renderPics = () => {
-        return ((uri) => {
-            if( uri === undefined) {
-                return null
-            } else if (uri) {
-                return (
-                    <Animated.View
-                    {...this.PanResponder.panHandlers}  
-                    style={[this.rotateTranslate,
-                        {width: ScreenWidth,
-                        height: ScreenHeight - 280,
-                        position: 'absolute',
-                        padding: 10
-                        }]}>
-                       <Image style={{
-                           flex: 1,
-                           resizeMode: 'cover',
-                           height: null,
-                           width: null,
-                           borderRadius: 30
+        return (
+            <View>
+                <Animated.View
+                {...this.PanResponder.panHandlers}  
+                style={[this.rotateTranslate,
+                    {width: ScreenWidth,
+                    height: ScreenHeight - 280,
+                    position: 'absolute',
+                    padding: 10
+                }]}>
+                    <Image style={{
+                            flex: 1,
+                            resizeMode: 'cover',
+                            height: null,
+                            width: null,
+                            borderRadius: 30
                         }}
-                           source={uri}
-                        /> 
-                    </Animated.View>
-                )
-            }
-        }) 
-    };
+                        source={userPosts.downloadURL}
+                        
+                    /> 
+                    <Text>Caption</Text> 
+                </Animated.View>
+            </View>
+        )
+    }
 
     render() {
         return (
-        <View style={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>
             <View style={{height: 5}}>
             </View>
             <View style={{flex: 1}}>
@@ -124,19 +152,13 @@ export class DashBoardScreen extends React.Component {
             </View>
             <View style={{height: 60}}>
             </View>
-        </View>
+            </View>
         )
     }
 }
 
 
 
-const mapStateToProps = (store) => ({
-    currentUser: store.userState.currentUser,
-    users: store.usersState.users
-   
-})
 
-const mapDispatachProps = (dispatch) => bindActionCreators({fetchUser, fetchUserPosts, fetchUsersData}, dispatch)
 
-export default connect(mapStateToProps, mapDispatachProps)(DashBoardScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(DashBoardScreen);
