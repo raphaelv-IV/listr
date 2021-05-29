@@ -8,7 +8,23 @@ import { Platform } from 'react-native';
 import auth from "@react-native-firebase/auth";
 import firebase from 'firebase';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-
+const ios = (Platform.OS == "ios" ? true : false);
+const LoginScreen = ({navigation}) => {    
+    return (
+    <KeyboardAvoidingView
+    behavior={ios ? "padding" : "height"}
+    keyboardVerticalOffset={ios ? 0 : 20}
+    enabled= {ios}
+    style={styles.screen}>
+        <></>
+        <TextBox2 ios={ios}/>
+        <TextBox3 ios={ios}/>
+        <View style={styles.btn}>
+        <Button title="Login" />
+        <Button title="Sign Up" onPress={() => navigation.navigate("Sign Up")}/>
+        </View>
+    </KeyboardAvoidingView>
+    )
 
 
 export default class LoginScreen extends React.Component {

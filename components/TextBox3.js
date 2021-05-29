@@ -5,10 +5,11 @@ import Icon from "react-native-vector-icons/Entypo";
 
 
 function Textbox3(props) {
+  const whatStyle = (props.ios ? styles.iphoneStyle: styles.androidStyle)
   return (
     <View style={[styles.container, props.style]}>
       <Icon name="lock" style={styles.iconStyle}></Icon>
-      <TextInput placeholder="Password" style={styles.inputStyle}></TextInput>
+      <TextInput placeholder="Password" style={whatStyle}></TextInput>
     </View>
   );
 }
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
       fontSize: 24,
       paddingLeft: 8
     },
-    inputStyle: {
+    androidStyle: {
       flex: 1,  
       color: "#000",
       marginLeft: 16,
@@ -33,6 +34,18 @@ const styles = StyleSheet.create({
       alignSelf: "stretch",
       lineHeight: 16,
       borderBottomWidth: 1,
+      borderColor: "#D9D5DC",
+      paddingTop: 14,
+      paddingBottom: 8
+    },
+    iphoneStyle: {
+      color: "#000",
+      marginLeft: 15,
+      paddingRight: 5,
+      fontSize: 14,
+      flex: 1,
+      lineHeight: 16,
+      borderBottomWidth: 2,
       borderColor: "#D9D5DC",
       paddingTop: 14,
       paddingBottom: 8
