@@ -1,17 +1,15 @@
 import React from 'react';
 import { StyleSheet, View, KeyboardAvoidingView, Text, Image, TextInput } from 'react-native';
-import TextBox2 from '../components/TextBox2';
-import TextBox3 from '../components/TextBox3';
 import Button from '../components/Button';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Platform } from 'react-native';
-import auth from "@react-native-firebase/auth";
 import firebase from 'firebase';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { USER_POSTS_STATE_CHANGE } from '../components/redux/constants';
 
 
 
-export default class LoginScreen extends React.Component {
+class LoginScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state={
@@ -34,7 +32,35 @@ export default class LoginScreen extends React.Component {
 
        })
     }
-    
+
+    anonymousLogin() {
+        firebase.auth()
+            .signInAnonymously()
+            .then(() => {
+                this.props.navigation.navigate('Home')
+            })
+            .catch(error => {
+                if (error.code === 'auth/operation-not-allowed') {
+                console.log('Enable anonymous in your firebase console.');
+                }
+
+                console.error(error);
+        });
+    }
+
+
+    componentDidMount = () => {
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                console.log('UID:', user.uid)
+                if (this.props.user != null) {
+                    this.props.navigation.navigate('Home')
+                }
+            } else {
+
+            }
+        })
+    }
 
 
     render() {
@@ -62,6 +88,9 @@ export default class LoginScreen extends React.Component {
                     <TouchableOpacity style={styles.signup} onPress={() => navigate("Sign Up")}>
                     <Text>New to Listr?</Text><Text style={{color: "red"}}>Sign Up</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity style={styles.signup2} onPress={() => this.anonymousLogin()}>
+                    <Text>Skip Login</Text>
+                    </TouchableOpacity>
                 </View>
     
             </KeyboardAvoidingView>
@@ -86,7 +115,8 @@ const styles = StyleSheet.create({
     signup: {
         alignItems: 'center',
         justifyContent: 'center',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        padding: 20
     },
     signup2: {
         alignItems: 'center',
@@ -140,8 +170,16 @@ const styles = StyleSheet.create({
         color: "#616161",
         fontSize: 24,
         paddingLeft: 10
+    },
+    signup2: {
+        flexDirection: 'row',
+        alignContent: 'center',
+        justifyContent: 'center',
+        padding: 25
     }
 });
 
+
+export default LoginScreen;
 
 
