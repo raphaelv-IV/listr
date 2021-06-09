@@ -5,46 +5,24 @@ import { bindActionCreators } from 'redux';
 import { fetchUser, fetchUserPosts, fetchUsersData} from '../components/redux/actions/index';
 import firestore from '@react-native-firebase/firestore';
 import firebase from 'firebase';
-import { TouchableHighlightBase } from 'react-native';
+
 
 
 const ScreenWidth = Dimensions.get("window").width
 const ScreenHeight = Dimensions.get("window").height
 
-const mapStateToProps = (store) => ({
-    posts: store.userState.posts
-}) 
-
-const mapDispatchToProps = dispatch => {
-    return {
-
-    }
-}
-
 
 class DashBoardScreen extends React.Component {
-    state = {
-        usersPosts: []
-    }
     constructor(props){
         super(props)
         this.fetchUser
         this.position = new Animated.ValueXY()
-        this.subscriber =
-            firebase.firestore()
-                .collection("posts")
-                .doc()
-                .collection("usersPosts")
-                .doc()
-                .onSnapshot(doc => {
-                    this.setState({
-                        posts: {
-                            usersPosts: doc.data()
-                        }
-                    })
+        this.postsRef = firebase.firestore().collection('posts').get();
+        this.state={
+            posts: []
+        }
 
-                })
-    
+
 
         this.PanResponder = PanResponder.create({
             onStartShouldSetPanResponder: (event, gestureState) => true,
@@ -57,7 +35,7 @@ class DashBoardScreen extends React.Component {
                         toValue: {x: ScreenWidth + 100, y: gestureState.dy},
                         useNativeDriver: true
                     }) .start(() => {
-                        this.setState({posts}, () => {
+                        this.setState({     }, () => {
                             this.position.setValue({x: 0, y: 0})
                         })
                     })
@@ -67,7 +45,7 @@ class DashBoardScreen extends React.Component {
                         toValue: {x: -ScreenWidth - 150, y: gestureState.dy},
                         useNativeDriver: true
                     }) .start(() => {
-                        this.setState({posts}, () => {
+                        this.setState({    }, () => {
                             this.position.setValue({x: 0, y: 0})
                         })
                     })
@@ -106,39 +84,39 @@ class DashBoardScreen extends React.Component {
     }
 
 
+    componentDidMount() {
+        this.fetchUser()
+    }
+
     fetchUser = async () => {
         const users = await firestore()
         .collection("users")
         .get()
     }
 
-  
-
 
     renderPics = () => {
         return (
-            <View>
-                <Animated.View
-                {...this.PanResponder.panHandlers}  
-                style={[this.rotateTranslate,
-                    {width: ScreenWidth,
-                    height: ScreenHeight - 280,
-                    position: 'absolute',
-                    padding: 10
-                }]}>
-                    <Image style={{
-                            flex: 1,
-                            resizeMode: 'cover',
-                            height: null,
-                            width: null,
-                            borderRadius: 30
-                        }}
-                        source={userPosts.downloadURL}
-                        
-                    /> 
-                    <Text>Caption</Text> 
-                </Animated.View>
-            </View>
+            <Animated.View
+            {...this.PanResponder.panHandlers}  
+            style={[this.rotateTranslate,
+                {width: ScreenWidth,
+                height: ScreenHeight - 280,
+                position: 'absolute',
+                padding: 10
+            }]}>
+                <Image style={{
+                        flex: 1,
+                        resizeMode: 'cover',
+                        height: null,
+                        width: null,
+                        borderRadius: 30
+                    }}
+                    source={uri.downloadURL}
+                         
+                /> 
+                <Text>Caption</Text> 
+            </Animated.View>
         )
     }
 
@@ -161,4 +139,4 @@ class DashBoardScreen extends React.Component {
 
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(DashBoardScreen);
+export default DashBoardScreen;
