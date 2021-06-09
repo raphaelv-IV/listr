@@ -14,7 +14,12 @@ import SettingsScreen from '../screens/SettingsScreen';
 import MessagesScreen from '../screens/MessagesScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
 import DashBoardScreen from '../screens/DashBoardScreen';
-import HomeTabs from '../navigation/TabNav';
+import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons'
+import color from 'color';
+import { Alert } from 'react-native';
+import firebase from 'firebase';
+
+
 
 const Stack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -43,16 +48,46 @@ const CustomTabBarButtion = ({children, onPress}) => (
     </TouchableOpacity>
 );
 
+ const onLogout = () => {
+    firebase.auth()
+    .signOut()
+    .then(() => console.log("logged Out"));
+ }
+
 
 
 export default MainStack = () => {
     return(
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="Home">
+            <Stack.Navigator initialRouteName="Welcome">
                 <Stack.Screen name="Welcome" component={WelcomeScreen} options={{headerShown: false}} /> 
                 <Stack.Screen name="Login" component={LoginScreen} /> 
                 <Stack.Screen name="Sign Up" component={SignupScreen} />
-                <Stack.Screen name="Home">{() => (
+                <Stack.Screen name="Home" options={{ headerRight: () => (
+                        <SimpleLineIcon
+                            name="logout"
+                            size={24}
+                            color={color.BLACK}
+                            style={{right:10}}
+                            onPress={() => 
+                                Alert.alert(
+                                    'Logout',
+                                    'Are you sure you would like to log out',
+                                    [
+                                        {
+                                            text:'Yes', 
+                                            onPress: () => onLogout()
+                                        },
+                                        {
+                                            text: 'No'
+                                        }
+                                    ],
+                                    {
+                                        cancelable: false
+                                    }
+                        )}/>
+                    ),}}  
+                    >{() => (
                      <Tabs.Navigator
                      initialRouteName = "DashBoardScreen"
                      tabBarOptions={{
@@ -71,7 +106,7 @@ export default MainStack = () => {
                      }}>
                          <Tabs.Screen name="Home" component={DashBoardScreen} 
                          options={{
-                                 tabBarIcon: ({focused}) => (
+                                tabBarIcon: ({focused}) => (
                                      <View style={{alignItems: 'center', justifyContent: 'center', top: "2%"}}>
                                          <Image 
                                          source={require('../assets/home2.jpg')}
@@ -84,6 +119,7 @@ export default MainStack = () => {
                                      <Text style={{color: focused ? "black" : '#748c94', fontSize: 12}}>Home</Text>
                                  </View>                 
                              )
+                        
                          }}/>
                          <Tabs.Screen name="Search" component={SearchScreen} 
                          options={{
@@ -141,7 +177,13 @@ export default MainStack = () => {
                                  </View>
                              )
                          }}/>
-                         <Tabs.Screen name="Messages" component={MessagesScreen}
+                         <Tabs.Screen name="Message" component={EmptyScreen}
+                         listeners={({ navigation }) => ({
+                            tabPress: event => {
+                                event.preventDefault();
+                                navigation.navigate("Messages")
+                            }
+                        })}
                          options={{
                              tabBarIcon: ({focused}) => (
                                  <View style={{alignItems: 'center', justifyContent: 'center', top: "2%"}}>
@@ -162,6 +204,7 @@ export default MainStack = () => {
                 </Stack.Screen>
                 <Stack.Screen name="AddListing" component={AddListScreen}/> 
                 <Stack.Screen name="Save" component={SaveScreen} />
+                <Stack.Screen name="Messages" component={MessagesScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );
