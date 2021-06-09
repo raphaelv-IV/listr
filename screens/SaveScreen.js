@@ -8,7 +8,6 @@ require("firebase/firebase-storage")
 export default function SaveScreen(props) {
     const [caption, setCaption] = useState(" ")
 
-
     const uploadImage = async() => {
         const uri = props.route.params.image;
         const response = await fetch(uri);
@@ -37,18 +36,16 @@ export default function SaveScreen(props) {
         task.on("state_changed", taskProgress, taskError, taskCompleted)
     }
 
-
-    const savePostData = (getDownloadURL) => {
+    const savePostData = (getDownloadURL, navigation)  => {
         firebase.firestore()
         .collection('posts')
-        .doc(firebase.auth().currentUser.id)
-        .collection("userPosts")
+        .collection("usersPosts")
         .add({
-            downloadURL,
+            getDownloadURL,
             caption,
             creation: firebase.firestore.FieldValue.serverTimestamp()
         }).then((function () {
-            props.navigation.popToTop()
+            props.navigation.navigate("Home")
         }))
     }
     return (
@@ -62,4 +59,6 @@ export default function SaveScreen(props) {
         </View>
     )
 }
+
+
 
