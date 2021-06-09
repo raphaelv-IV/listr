@@ -2,15 +2,15 @@ import React from 'react';
 import { StyleSheet, View, KeyboardAvoidingView, Image, TextInput } from 'react-native';
 import Button from '../components/Button';
 import auth from "@react-native-firebase/auth";
-import { NavigationEvents, StackNavigator } from 'react-navigation';
-import TabNav from '../navigation/TabNav';
 import firebase from 'firebase';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 
+
 const ios = (Platform.OS == "ios" ? true : false);
 
-export default class SignupScreen extends React.Component {
+
+class SignupScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state={
@@ -22,22 +22,26 @@ export default class SignupScreen extends React.Component {
 
     }
 
-
     onSignup() {
         const { email, password, name } = this.state;
         const {navigate} = this.props.navigation 
         firebase.auth().createUserWithEmailAndPassword(email.trim(), password)
         .then((result) => {
+            firebase.firestore().collection("users")
+            .doc(firebase.auth().currentUser.uid)
+            .set({
+                name,
+                email,
+                uid
+            })
             console.log(result)
             navigate("Home")
         })
        .catch((error) => {
            console.log(error)
-
        })
     }
     
-
     render() {
         const whatStyle = (Platform.OS == "ios" ? styles.iphoneStyle: styles.androidStyle)
         return (
@@ -66,6 +70,7 @@ export default class SignupScreen extends React.Component {
         )
     }
 }
+
 
 
 const styles = StyleSheet.create({
@@ -138,7 +143,7 @@ const styles = StyleSheet.create({
 });
 
 
-
+export default SignupScreen;
 
 
 
